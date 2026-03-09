@@ -14,6 +14,15 @@ export default function OnboardingScreen() {
   const [infoExpanded, setInfoExpanded] = useState(false);
   const hasVault = vaultExists();
   const supported = isWebAuthnSupported();
+  const autoTriggered = useRef(false);
+
+  // Auto-trigger unlock if vault exists
+  useEffect(() => {
+    if (hasVault && supported && !autoTriggered.current) {
+      autoTriggered.current = true;
+      handleUnlock(true);
+    }
+  }, [hasVault, supported]);
 
   const handleCreate = async () => {
     setLoading(true);
