@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Shield, Key, AlertCircle } from 'lucide-react';
+import { Shield, Key, AlertCircle, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { isWebAuthnSupported, registerCredential, authenticateCredential } from '@/lib/webauthn';
 import { createVault, unlockVault, vaultExists, getStoredKeyIds, isVaultPrfEnabled } from '@/lib/vault';
