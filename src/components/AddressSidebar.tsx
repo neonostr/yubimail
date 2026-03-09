@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useVault } from '@/contexts/VaultContext';
 import { Plus, Copy, Trash2, Tag, Timer, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
