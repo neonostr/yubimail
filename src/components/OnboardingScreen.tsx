@@ -14,7 +14,6 @@ export default function OnboardingScreen() {
   const [infoExpanded, setInfoExpanded] = useState(false);
   const hasVault = vaultExists();
   const supported = isWebAuthnSupported();
-  const supported = isWebAuthnSupported();
 
   const handleCreate = async () => {
     setLoading(true);
