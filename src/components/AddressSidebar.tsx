@@ -25,7 +25,14 @@ interface Props {
 
 export default function AddressSidebar({ onCreateNew }: Props) {
   const { vault, selectedAccountId, setSelectedAccountId, updateVault } = useVault();
+  const [, setTick] = useState(0);
   const accounts = vault?.accounts || [];
+
+  // Force re-render every 30s to keep timer badges up-to-date
+  useEffect(() => {
+    const interval = setInterval(() => setTick((t) => t + 1), 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCopy = async (address: string, e: React.MouseEvent) => {
     e.stopPropagation();
