@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Shield, Key, AlertCircle } from 'lucide-react';
+import { Shield, Key, AlertCircle, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { isWebAuthnSupported, registerCredential, authenticateCredential } from '@/lib/webauthn';
 import { createVault, unlockVault, vaultExists, getStoredKeyIds, isVaultPrfEnabled } from '@/lib/vault';
@@ -11,6 +11,7 @@ export default function OnboardingScreen() {
   const { setVault, setCryptoKey, setVmkBytes, setPrfEnabled } = useVault();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [infoExpanded, setInfoExpanded] = useState(false);
   const hasVault = vaultExists();
   const supported = isWebAuthnSupported();
 
@@ -155,7 +156,7 @@ export default function OnboardingScreen() {
           className="grid grid-cols-3 gap-4 pt-4"
         >
           {[
-            { label: 'Encrypted', desc: 'AES-256-GCM' },
+            { label: 'Encrypted Vault', desc: 'AES-256-GCM credentials' },
             { label: 'No Backend', desc: 'Client-side only' },
             { label: 'Disposable', desc: 'Auto-delete timers' },
           ].map((f) => (
@@ -164,6 +165,58 @@ export default function OnboardingScreen() {
               <p className="text-xs text-muted-foreground">{f.desc}</p>
             </div>
           ))}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+        >
+          {!infoExpanded ? (
+            <button
+              onClick={() => setInfoExpanded(true)}
+              className="flex items-center gap-1.5 mx-auto text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Info className="w-3.5 h-3.5" />
+              How does this work?
+            </button>
+          ) : (
+            <div className="text-left space-y-3 p-4 rounded-lg bg-card border border-border text-xs text-muted-foreground">
+              <button
+                onClick={() => setInfoExpanded(false)}
+                className="flex items-center gap-1.5 text-foreground font-medium mb-2"
+              >
+                <Info className="w-3.5 h-3.5 text-primary" />
+                How YubiMail works
+              </button>
+
+              <div className="space-y-2">
+                <p>
+                  <span className="text-foreground font-medium">What it does:</span> YubiMail creates disposable email addresses using the{' '}
+                  <a href="https://docs.mail.tm" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2 hover:text-primary/80">
+                    mail.tm API
+                  </a>
+                  . Your login credentials for these addresses are encrypted and stored locally in your browser, protected by your YubiKey.
+                </p>
+
+                <p>
+                  <span className="text-foreground font-medium">Receive only:</span> These are receive-only inboxes. You cannot send emails from them.
+                </p>
+
+                <p>
+                  <span className="text-foreground font-medium">Email retention:</span> Emails on mail.tm servers are stored for a maximum of 7 days, then automatically deleted. This is a limitation of the upstream service.
+                </p>
+
+                <p>
+                  <span className="text-foreground font-medium">What is encrypted:</span> Your mail.tm account credentials (email + password) are encrypted with AES-256-GCM inside the vault. The emails themselves are not end-to-end encrypted — they are standard emails stored on mail.tm servers.
+                </p>
+
+                <p>
+                  <span className="text-foreground font-medium">No backend:</span> YubiMail has no server. The encrypted vault lives entirely in your browser's local storage. If you clear your browser data, your vault is gone.
+                </p>
+              </div>
+            </div>
+          )}
         </motion.div>
       </motion.div>
     </div>
