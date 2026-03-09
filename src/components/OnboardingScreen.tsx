@@ -13,7 +13,7 @@ export default function OnboardingScreen() {
   const [error, setError] = useState<string | null>(null);
   const [infoExpanded, setInfoExpanded] = useState(false);
   const hasVault = vaultExists();
-  const hasVault = vaultExists();
+  const supported = isWebAuthnSupported();
   const supported = isWebAuthnSupported();
 
   const handleCreate = async () => {
