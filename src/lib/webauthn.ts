@@ -10,7 +10,7 @@ function generateUserId(): Uint8Array {
 export async function registerCredential(
   username: string = 'yubimail-user'
 ): Promise<{ credentialId: string; rawId: ArrayBuffer }> {
-  const challenge = crypto.getRandomValues(new Uint8Array(32));
+  const challenge = crypto.getRandomValues(new Uint8Array(32)) as Uint8Array<ArrayBuffer>;
 
   const createOptions: PublicKeyCredentialCreationOptions = {
     challenge,
