@@ -13,7 +13,9 @@ function getDefaultVault(): VaultData {
 
 export async function createVault(
   credentialId: string,
-  rawId: ArrayBuffer
+  rawId: ArrayBuffer,
+  keyMaterial: ArrayBuffer,
+  prfEnabled: boolean
 ): Promise<{ vault: VaultData; key: CryptoKey }> {
   const vault = getDefaultVault();
   vault.registeredKeys.push({
@@ -24,7 +26,7 @@ export async function createVault(
   });
 
   const salt = generateSalt();
-  const key = await deriveKey(rawId, salt);
+  const key = await deriveKey(keyMaterial, salt);
 
   const jsonData = JSON.stringify(vault);
   const { iv, encrypted } = await encrypt(jsonData, key);
@@ -34,6 +36,7 @@ export async function createVault(
     data: encrypted,
     salt: arrayBufferToBase64(salt),
     keyIds: [credentialId],
+    prfEnabled,
   };
 
   localStorage.setItem(VAULT_STORAGE_KEY, JSON.stringify(encryptedVault));
@@ -43,7 +46,7 @@ export async function createVault(
 
 export async function unlockVault(
   credentialId: string,
-  rawId: ArrayBuffer
+  keyMaterial: ArrayBuffer
 ): Promise<{ vault: VaultData; key: CryptoKey }> {
   const stored = localStorage.getItem(VAULT_STORAGE_KEY);
   if (!stored) {
@@ -57,7 +60,7 @@ export async function unlockVault(
   }
 
   const salt = base64ToArrayBuffer(encryptedVault.salt);
-  const key = await deriveKey(rawId, salt);
+  const key = await deriveKey(keyMaterial, salt);
 
   const jsonData = await decrypt(encryptedVault.data, encryptedVault.iv, key);
   const vault: VaultData = JSON.parse(jsonData);
@@ -96,6 +99,17 @@ export function getStoredKeyIds(): string[] {
     return encryptedVault.keyIds;
   } catch {
     return [];
+  }
+}
+
+export function isVaultPrfEnabled(): boolean {
+  const stored = localStorage.getItem(VAULT_STORAGE_KEY);
+  if (!stored) return false;
+  try {
+    const encryptedVault: EncryptedVault = JSON.parse(stored);
+    return encryptedVault.prfEnabled ?? false;
+  } catch {
+    return false;
   }
 }
 

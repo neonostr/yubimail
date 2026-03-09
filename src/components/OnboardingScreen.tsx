@@ -1,14 +1,14 @@
 import { motion } from 'framer-motion';
-import { Shield, Key, AlertCircle } from 'lucide-react';
+import { Shield, Key, AlertCircle, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { isWebAuthnSupported, registerCredential, authenticateCredential } from '@/lib/webauthn';
-import { createVault, unlockVault, vaultExists, getStoredKeyIds } from '@/lib/vault';
+import { createVault, unlockVault, vaultExists, getStoredKeyIds, isVaultPrfEnabled } from '@/lib/vault';
 import { useVault } from '@/contexts/VaultContext';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 export default function OnboardingScreen() {
-  const { setVault, setCryptoKey } = useVault();
+  const { setVault, setCryptoKey, setPrfEnabled } = useVault();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const hasVault = vaultExists();
@@ -18,11 +18,23 @@ export default function OnboardingScreen() {
     setLoading(true);
     setError(null);
     try {
-      const { credentialId, rawId } = await registerCredential();
-      const { vault, key } = await createVault(credentialId, rawId);
+      const result = await registerCredential();
+      const keyMaterial = result.prfOutput || result.rawId;
+      const { vault, key } = await createVault(
+        result.credentialId,
+        result.rawId,
+        keyMaterial,
+        result.prfSupported
+      );
       setVault(vault);
       setCryptoKey(key);
-      toast.success('Vault created successfully');
+      setPrfEnabled(result.prfSupported);
+
+      if (!result.prfSupported) {
+        toast.warning('Your authenticator does not support PRF. Using fallback encryption (less secure).');
+      } else {
+        toast.success('Vault created with hardware-bound encryption');
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to create vault');
     } finally {
@@ -35,10 +47,24 @@ export default function OnboardingScreen() {
     setError(null);
     try {
       const keyIds = getStoredKeyIds();
-      const { credentialId, rawId } = await authenticateCredential(keyIds);
-      const { vault, key } = await unlockVault(credentialId, rawId);
+      const vaultUsesPrf = isVaultPrfEnabled();
+      const result = await authenticateCredential(keyIds);
+
+      // Use PRF output if vault was created with PRF, otherwise fallback to rawId
+      let keyMaterial: ArrayBuffer;
+      if (vaultUsesPrf) {
+        if (!result.prfOutput) {
+          throw new Error('This vault requires PRF support. Your authenticator may not support it, or use a different key.');
+        }
+        keyMaterial = result.prfOutput;
+      } else {
+        keyMaterial = result.rawId;
+      }
+
+      const { vault, key } = await unlockVault(result.credentialId, keyMaterial);
       setVault(vault);
       setCryptoKey(key);
+      setPrfEnabled(vaultUsesPrf);
       toast.success('Vault unlocked');
     } catch (err: any) {
       setError(err.message || 'Failed to unlock vault');

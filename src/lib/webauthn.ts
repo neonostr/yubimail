@@ -3,15 +3,33 @@ import { arrayBufferToBase64, base64ToArrayBuffer } from './crypto';
 const RP_NAME = 'YubiMail';
 const RP_ID = window.location.hostname;
 
+// Fixed application-specific PRF salt
+let prfSaltCache: ArrayBuffer | null = null;
+
+async function getPrfSalt(): Promise<ArrayBuffer> {
+  if (prfSaltCache) return prfSaltCache;
+  const encoded = new TextEncoder().encode('YubiMail-vault-prf-v1');
+  prfSaltCache = await crypto.subtle.digest('SHA-256', encoded);
+  return prfSaltCache;
+}
+
 function generateUserId(): ArrayBuffer {
   return crypto.getRandomValues(new Uint8Array(16)).buffer as ArrayBuffer;
 }
 
+export interface WebAuthnResult {
+  credentialId: string;
+  rawId: ArrayBuffer;
+  prfOutput?: ArrayBuffer;
+  prfSupported: boolean;
+}
+
 export async function registerCredential(
   username: string = 'yubimail-user'
-): Promise<{ credentialId: string; rawId: ArrayBuffer }> {
+): Promise<WebAuthnResult> {
   const challenge = new Uint8Array(32);
   crypto.getRandomValues(challenge);
+  const prfSalt = await getPrfSalt();
 
   const createOptions: PublicKeyCredentialCreationOptions = {
     challenge,
@@ -35,6 +53,10 @@ export async function registerCredential(
     },
     timeout: 60000,
     attestation: 'none',
+    extensions: {
+      // @ts-ignore - PRF extension not yet in TypeScript types
+      prf: { eval: { first: new Uint8Array(prfSalt) } },
+    } as any,
   };
 
   const credential = (await navigator.credentials.create({
@@ -48,14 +70,46 @@ export async function registerCredential(
   const rawId = credential.rawId;
   const credentialId = arrayBufferToBase64(rawId);
 
-  return { credentialId, rawId };
+  // Check PRF support from extension results
+  const extResults = credential.getClientExtensionResults() as any;
+  const prfResult = extResults?.prf;
+  let prfOutput: ArrayBuffer | undefined;
+  let prfSupported = false;
+
+  if (prfResult?.enabled) {
+    // PRF is supported but results come during authentication, not registration
+    // We need to do an immediate authentication to get the PRF output
+    prfSupported = true;
+  }
+
+  if (prfResult?.results?.first) {
+    prfOutput = prfResult.results.first;
+    prfSupported = true;
+  }
+
+  // If PRF indicated support but no output yet, do an auth to get it
+  if (prfSupported && !prfOutput) {
+    try {
+      const authResult = await authenticateCredential([credentialId]);
+      if (authResult.prfOutput) {
+        prfOutput = authResult.prfOutput;
+      } else {
+        prfSupported = false;
+      }
+    } catch {
+      prfSupported = false;
+    }
+  }
+
+  return { credentialId, rawId, prfOutput, prfSupported };
 }
 
 export async function authenticateCredential(
   allowedCredentialIds: string[]
-): Promise<{ credentialId: string; rawId: ArrayBuffer }> {
+): Promise<WebAuthnResult> {
   const challenge = new Uint8Array(32);
   crypto.getRandomValues(challenge);
+  const prfSalt = await getPrfSalt();
 
   const allowCredentials: PublicKeyCredentialDescriptor[] =
     allowedCredentialIds.map((id) => ({
@@ -70,6 +124,10 @@ export async function authenticateCredential(
     allowCredentials,
     userVerification: 'discouraged',
     timeout: 60000,
+    extensions: {
+      // @ts-ignore
+      prf: { eval: { first: new Uint8Array(prfSalt) } },
+    } as any,
   };
 
   const assertion = (await navigator.credentials.get({
@@ -80,9 +138,21 @@ export async function authenticateCredential(
     throw new Error('Authentication failed');
   }
 
+  const extResults = assertion.getClientExtensionResults() as any;
+  const prfResult = extResults?.prf;
+  let prfOutput: ArrayBuffer | undefined;
+  let prfSupported = false;
+
+  if (prfResult?.results?.first) {
+    prfOutput = prfResult.results.first;
+    prfSupported = true;
+  }
+
   return {
     credentialId: arrayBufferToBase64(assertion.rawId),
     rawId: assertion.rawId,
+    prfOutput,
+    prfSupported,
   };
 }
 
