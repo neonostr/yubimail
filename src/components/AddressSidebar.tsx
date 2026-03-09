@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { useVault } from '@/contexts/VaultContext';
-import { Plus, Copy, Trash2, Tag, Timer, Mail, ChevronRight } from 'lucide-react';
+import { Plus, Copy, Trash2, Tag, Timer, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
