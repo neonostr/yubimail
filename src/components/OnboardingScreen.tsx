@@ -12,7 +12,7 @@ export default function OnboardingScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [infoExpanded, setInfoExpanded] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const hasVault = vaultExists();
   const hasVault = vaultExists();
   const supported = isWebAuthnSupported();
 
