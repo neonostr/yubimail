@@ -53,7 +53,7 @@ export default function OnboardingScreen() {
     }
   };
 
-  const handleUnlock = async () => {
+  const handleUnlock = async (silent = false) => {
     setLoading(true);
     setError(null);
     try {
@@ -78,7 +78,10 @@ export default function OnboardingScreen() {
       setPrfEnabled(vaultUsesPrf);
       toast.success('Vault unlocked');
     } catch (err: any) {
-      setError(err.message || 'Failed to unlock vault');
+      if (!silent) {
+        setError(err.message || 'Failed to unlock vault');
+      }
+      // Silent mode: user cancelled, just reset quietly
     } finally {
       setLoading(false);
     }
