@@ -133,7 +133,7 @@ export default function OnboardingScreen() {
           >
             {hasVault ? (
               <>
-                <Button onClick={handleUnlock} disabled={loading} size="lg" className="w-full h-14 text-base gap-3">
+                <Button onClick={() => handleUnlock()} disabled={loading} size="lg" className="w-full h-14 text-base gap-3">
                   <Key className="w-5 h-5" />
                   {loading ? 'Waiting for YubiKey...' : 'Tap YubiKey to Unlock'}
                 </Button>
