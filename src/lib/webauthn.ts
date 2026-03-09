@@ -54,7 +54,8 @@ export async function registerCredential(
 export async function authenticateCredential(
   allowedCredentialIds: string[]
 ): Promise<{ credentialId: string; rawId: ArrayBuffer }> {
-  const challenge = crypto.getRandomValues(new Uint8Array(32));
+  const challenge = new Uint8Array(32);
+  crypto.getRandomValues(challenge);
 
   const allowCredentials: PublicKeyCredentialDescriptor[] =
     allowedCredentialIds.map((id) => ({
