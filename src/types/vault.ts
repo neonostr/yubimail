@@ -5,7 +5,7 @@ export interface MailAccount {
   token: string;
   createdAt: number;
   tag?: string;
-  autoDeleteAt?: number; // timestamp when to auto-delete
+  autoDeleteAt?: number;
   autoDeleteDuration?: '1h' | '24h' | '7d';
 }
 
@@ -22,12 +22,21 @@ export interface VaultData {
   version: number;
 }
 
+export interface WrappedKey {
+  credentialId: string;
+  wrappedVmk: string;   // base64 — VMK encrypted with this key's derived key
+  wrappingIv: string;    // base64
+  salt: string;          // base64 — per-key HKDF salt
+}
+
 export interface EncryptedVault {
-  iv: string; // base64
-  data: string; // base64 encrypted
-  salt: string; // base64
-  keyIds: string[]; // credential IDs that can unlock this vault
-  prfEnabled: boolean; // true if vault key is derived from PRF (hardware-bound)
+  iv: string;
+  data: string;
+  wrappedKeys: WrappedKey[];
+  prfEnabled: boolean;
+  // Legacy fields (pre-VMK migration)
+  salt?: string;
+  keyIds?: string[];
 }
 
 export interface Email {

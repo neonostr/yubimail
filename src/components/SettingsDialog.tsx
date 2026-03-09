@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useVault } from '@/contexts/VaultContext';
 import { registerCredential } from '@/lib/webauthn';
-import { clearVault } from '@/lib/vault';
+import { clearVault, addKeyToVault, removeKeyFromVault } from '@/lib/vault';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,28 +15,38 @@ interface Props {
 }
 
 export default function SettingsDialog({ open, onOpenChange }: Props) {
-  const { vault, updateVault, lock } = useVault();
+  const { vault, vmkBytes, updateVault, lock } = useVault();
   const [addingKey, setAddingKey] = useState(false);
   const [newKeyLabel, setNewKeyLabel] = useState('');
 
   const handleAddKey = async () => {
+    if (!vmkBytes) {
+      toast.error('Vault master key not available. Please re-unlock.');
+      return;
+    }
     setAddingKey(true);
     try {
-      const { credentialId, rawId } = await registerCredential();
+      const result = await registerCredential();
+      const keyMaterial = result.prfOutput || result.rawId;
+
+      // Wrap VMK for the new key
+      await addKeyToVault(vmkBytes, result.credentialId, keyMaterial);
+
+      // Add key to vault data
       const { arrayBufferToBase64 } = await import('@/lib/crypto');
       await updateVault((v) => ({
         ...v,
         registeredKeys: [
           ...v.registeredKeys,
           {
-            credentialId,
-            publicKey: arrayBufferToBase64(rawId),
+            credentialId: result.credentialId,
+            publicKey: arrayBufferToBase64(result.rawId),
             registeredAt: Date.now(),
             label: newKeyLabel || `Key ${v.registeredKeys.length + 1}`,
           },
         ],
       }));
-      toast.success('YubiKey registered');
+      toast.success('YubiKey registered — it can now unlock the vault independently');
       setNewKeyLabel('');
     } catch (err: any) {
       toast.error('Failed to register key: ' + (err.message || ''));
@@ -50,6 +60,9 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
       toast.error('Cannot remove the last key');
       return;
     }
+    // Remove wrapped key entry
+    await removeKeyFromVault(credentialId);
+    // Remove from vault data
     await updateVault((v) => ({
       ...v,
       registeredKeys: v.registeredKeys.filter((k) => k.credentialId !== credentialId),
@@ -87,7 +100,7 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
       if (!file) return;
       try {
         const text = await file.text();
-        JSON.parse(text); // validate JSON
+        JSON.parse(text);
         localStorage.setItem('yubimail-vault', text);
         lock();
         toast.success('Vault imported. Please unlock with your YubiKey.');
@@ -107,12 +120,14 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
         </DialogHeader>
 
         <div className="space-y-6 py-2">
-          {/* Registered Keys */}
           <div className="space-y-3">
             <h3 className="text-sm font-semibold flex items-center gap-2 text-foreground">
               <Key className="w-4 h-4" />
               Registered YubiKeys
             </h3>
+            <p className="text-xs text-muted-foreground">
+              Each registered key can independently unlock the vault.
+            </p>
             <div className="space-y-2">
               {vault?.registeredKeys.map((key) => (
                 <div
@@ -157,7 +172,6 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
 
           <Separator />
 
-          {/* Backup */}
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-foreground">Vault Backup</h3>
             <div className="flex gap-2">
@@ -177,7 +191,6 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
 
           <Separator />
 
-          {/* Danger zone */}
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-destructive flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" />
