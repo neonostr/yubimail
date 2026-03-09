@@ -11,6 +11,8 @@ export default function OnboardingScreen() {
   const { setVault, setCryptoKey, setVmkBytes, setPrfEnabled } = useVault();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [infoExpanded, setInfoExpanded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const hasVault = vaultExists();
   const supported = isWebAuthnSupported();
 
