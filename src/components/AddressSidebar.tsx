@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useVault } from '@/contexts/VaultContext';
 import { Plus, Copy, Trash2, Tag, Timer, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { deleteAccount } from '@/lib/mailtm';
 import type { MailAccount } from '@/types/vault';
 
 function getTimeRemaining(autoDeleteAt?: number): string | null {
@@ -27,12 +28,44 @@ export default function AddressSidebar({ onCreateNew }: Props) {
   const { vault, selectedAccountId, setSelectedAccountId, updateVault } = useVault();
   const [, setTick] = useState(0);
   const accounts = vault?.accounts || [];
+  const cleaningRef = useRef(false);
 
-  // Force re-render every 30s to keep timer badges up-to-date
+  const cleanupExpired = useCallback(async () => {
+    if (cleaningRef.current || !vault) return;
+    const expired = vault.accounts.filter(
+      (a) => a.autoDeleteAt && a.autoDeleteAt <= Date.now()
+    );
+    if (expired.length === 0) return;
+
+    cleaningRef.current = true;
+    try {
+      for (const account of expired) {
+        await deleteAccount(account.id, account.token).catch(() => {});
+        toast.success(`Auto-deleted ${account.address}`);
+      }
+      const expiredIds = new Set(expired.map((a) => a.id));
+      await updateVault((v) => ({
+        ...v,
+        accounts: v.accounts.filter((a) => !expiredIds.has(a.id)),
+      }));
+      if (selectedAccountId && expiredIds.has(selectedAccountId)) {
+        setSelectedAccountId(null);
+      }
+    } finally {
+      cleaningRef.current = false;
+    }
+  }, [vault, selectedAccountId, setSelectedAccountId, updateVault]);
+
+  // Tick every 30s for timer badges + auto-delete cleanup
   useEffect(() => {
-    const interval = setInterval(() => setTick((t) => t + 1), 30000);
+    const interval = setInterval(() => {
+      setTick((t) => t + 1);
+      cleanupExpired();
+    }, 30000);
+    // Also run immediately on mount/vault change
+    cleanupExpired();
     return () => clearInterval(interval);
-  }, []);
+  }, [cleanupExpired]);
 
   const handleCopy = async (address: string, e: React.MouseEvent) => {
     e.stopPropagation();
