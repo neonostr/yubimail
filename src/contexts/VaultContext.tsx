@@ -6,9 +6,11 @@ interface VaultContextType {
   vault: VaultData | null;
   cryptoKey: CryptoKey | null;
   isUnlocked: boolean;
+  prfEnabled: boolean;
   selectedAccountId: string | null;
   setVault: (vault: VaultData) => void;
   setCryptoKey: (key: CryptoKey) => void;
+  setPrfEnabled: (enabled: boolean) => void;
   setSelectedAccountId: (id: string | null) => void;
   updateVault: (updater: (vault: VaultData) => VaultData) => Promise<void>;
   lock: () => void;
@@ -20,12 +22,14 @@ const VaultContext = createContext<VaultContextType | null>(null);
 export function VaultProvider({ children }: { children: React.ReactNode }) {
   const [vault, setVaultState] = useState<VaultData | null>(null);
   const [cryptoKey, setCryptoKeyState] = useState<CryptoKey | null>(null);
+  const [prfEnabled, setPrfEnabledState] = useState(false);
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
 
   const isUnlocked = vault !== null && cryptoKey !== null;
 
   const setVault = useCallback((v: VaultData) => setVaultState(v), []);
   const setCryptoKey = useCallback((k: CryptoKey) => setCryptoKeyState(k), []);
+  const setPrfEnabled = useCallback((e: boolean) => setPrfEnabledState(e), []);
 
   const updateVault = useCallback(
     async (updater: (vault: VaultData) => VaultData) => {
@@ -40,6 +44,7 @@ export function VaultProvider({ children }: { children: React.ReactNode }) {
   const lock = useCallback(() => {
     setVaultState(null);
     setCryptoKeyState(null);
+    setPrfEnabledState(false);
     setSelectedAccountId(null);
   }, []);
 
@@ -54,9 +59,11 @@ export function VaultProvider({ children }: { children: React.ReactNode }) {
         vault,
         cryptoKey,
         isUnlocked,
+        prfEnabled,
         selectedAccountId,
         setVault,
         setCryptoKey,
+        setPrfEnabled,
         setSelectedAccountId,
         updateVault,
         lock,

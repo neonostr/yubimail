@@ -27,6 +27,7 @@ export interface EncryptedVault {
   data: string; // base64 encrypted
   salt: string; // base64
   keyIds: string[]; // credential IDs that can unlock this vault
+  prfEnabled: boolean; // true if vault key is derived from PRF (hardware-bound)
 }
 
 export interface Email {

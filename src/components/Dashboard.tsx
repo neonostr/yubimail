@@ -5,11 +5,11 @@ import InboxView from '@/components/InboxView';
 import CreateAddressDialog from '@/components/CreateAddressDialog';
 import SettingsDialog from '@/components/SettingsDialog';
 import { Button } from '@/components/ui/button';
-import { Lock, Settings, Shield } from 'lucide-react';
+import { Lock, Settings, Shield, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Dashboard() {
-  const { lock, vault } = useVault();
+  const { lock, vault, prfEnabled } = useVault();
   const [createOpen, setCreateOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -20,6 +20,16 @@ export default function Dashboard() {
 
   return (
     <div className="dark h-screen flex flex-col bg-background text-foreground">
+      {/* PRF fallback warning */}
+      {!prfEnabled && (
+        <div className="flex items-center gap-2 px-4 py-2 bg-warning/10 border-b border-warning/20 text-warning text-xs">
+          <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+          <span>
+            Fallback encryption mode — your authenticator doesn't support PRF. The vault key is derived from a public credential ID, not a hardware secret.
+          </span>
+        </div>
+      )}
+
       {/* Top bar */}
       <header className="h-12 border-b border-border flex items-center justify-between px-4 shrink-0">
         <div className="flex items-center gap-2">
@@ -43,18 +53,14 @@ export default function Dashboard() {
 
       {/* Main content */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
         <aside className="w-72 border-r border-border shrink-0 bg-card">
           <AddressSidebar onCreateNew={() => setCreateOpen(true)} />
         </aside>
-
-        {/* Inbox */}
         <main className="flex-1 overflow-hidden">
           <InboxView />
         </main>
       </div>
 
-      {/* Dialogs */}
       <CreateAddressDialog open={createOpen} onOpenChange={setCreateOpen} />
       <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
