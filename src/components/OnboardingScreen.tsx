@@ -93,14 +93,14 @@ export default function OnboardingScreen() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md text-center space-y-8"
-      >
+        className="w-full max-w-md text-center space-y-8">
+        
         <motion.div
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-          className="flex justify-center"
-        >
+          className="flex justify-center">
+          
           <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
             <Shield className="w-10 h-10 text-primary" />
           </div>
@@ -113,26 +113,26 @@ export default function OnboardingScreen() {
           <p className="text-muted-foreground text-lg leading-relaxed">
             Disposable email addresses, secured by your YubiKey.
             <br />
-            <span className="text-sm">No passwords. No accounts. No traces.</span>
+            <span className="text-sm">No passwords. No accounts. No tracking.</span>
           </p>
         </div>
 
-        {!supported ? (
-          <div className="flex items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive">
+        {!supported ?
+        <div className="flex items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <p className="text-sm text-left">
               WebAuthn is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.
             </p>
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="space-y-4"
-          >
-            {hasVault ? (
-              <>
+          </div> :
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="space-y-4">
+          
+            {hasVault ?
+          <>
                 <Button onClick={() => handleUnlock()} disabled={loading} size="lg" className="w-full h-14 text-base gap-3">
                   <Key className="w-5 h-5" />
                   {loading ? 'Waiting for YubiKey...' : 'Tap YubiKey to Unlock'}
@@ -140,64 +140,64 @@ export default function OnboardingScreen() {
                 <Button onClick={handleCreate} disabled={loading} variant="ghost" size="lg" className="w-full text-muted-foreground">
                   Create New Vault
                 </Button>
-              </>
-            ) : (
-              <Button onClick={handleCreate} disabled={loading} size="lg" className="w-full h-14 text-base gap-3">
+              </> :
+
+          <Button onClick={handleCreate} disabled={loading} size="lg" className="w-full h-14 text-base gap-3">
                 <Key className="w-5 h-5" />
                 {loading ? 'Waiting for YubiKey...' : 'Tap YubiKey to Get Started'}
               </Button>
-            )}
+          }
           </motion.div>
-        )}
+        }
 
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20"
-          >
+        {error &&
+        <motion.div
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
+          
             <AlertCircle className="w-4 h-4 text-destructive shrink-0" />
             <p className="text-sm text-destructive text-left">{error}</p>
           </motion.div>
-        )}
+        }
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="grid grid-cols-3 gap-4 pt-4"
-        >
+          className="grid grid-cols-3 gap-4 pt-4">
+          
           {[
-            { label: 'Encrypted Vault', desc: 'AES-256-GCM credentials' },
-            { label: 'No Backend', desc: 'Client-side only' },
-            { label: 'Disposable', desc: 'Auto-delete timers' },
-          ].map((f) => (
-            <div key={f.label} className="text-center space-y-1">
+          { label: 'Encrypted Vault', desc: 'AES-256-GCM credentials' },
+          { label: 'No Backend', desc: 'Client-side only' },
+          { label: 'Disposable', desc: 'Auto-delete timers' }].
+          map((f) =>
+          <div key={f.label} className="text-center space-y-1">
               <p className="text-sm font-medium text-foreground">{f.label}</p>
               <p className="text-xs text-muted-foreground">{f.desc}</p>
             </div>
-          ))}
+          )}
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-        >
-          {!infoExpanded ? (
-            <button
-              onClick={() => setInfoExpanded(true)}
-              className="flex items-center gap-1.5 mx-auto text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
+          transition={{ delay: 0.8 }}>
+          
+          {!infoExpanded ?
+          <button
+            onClick={() => setInfoExpanded(true)}
+            className="flex items-center gap-1.5 mx-auto text-xs text-muted-foreground hover:text-foreground transition-colors">
+            
               <Info className="w-3.5 h-3.5" />
               How does this work?
-            </button>
-          ) : (
-            <div className="text-left space-y-3 p-4 rounded-lg bg-card border border-border text-xs text-muted-foreground">
+            </button> :
+
+          <div className="text-left space-y-3 p-4 rounded-lg bg-card border border-border text-xs text-muted-foreground">
               <button
-                onClick={() => setInfoExpanded(false)}
-                className="flex items-center gap-1.5 text-foreground font-medium mb-2"
-              >
+              onClick={() => setInfoExpanded(false)}
+              className="flex items-center gap-1.5 text-foreground font-medium mb-2">
+              
                 <Info className="w-3.5 h-3.5 text-primary" />
                 How YubiMail works
               </button>
@@ -228,9 +228,9 @@ export default function OnboardingScreen() {
                 </p>
               </div>
             </div>
-          )}
+          }
         </motion.div>
       </motion.div>
-    </div>
-  );
+    </div>);
+
 }
