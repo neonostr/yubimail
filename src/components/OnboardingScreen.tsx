@@ -168,7 +168,7 @@ export default function OnboardingScreen() {
           className="grid grid-cols-3 gap-4 pt-4">
           
           {[
-          { label: 'Encrypted Vault', desc: 'AES-256-GCM credentials' },
+          { label: 'Encrypted Vault', desc: 'AES-256-GCM' },
           { label: 'No Backend', desc: 'Client-side only' },
           { label: 'Disposable', desc: 'Auto-delete timers' }].
           map((f) =>
