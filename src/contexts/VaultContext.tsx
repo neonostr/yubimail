@@ -5,11 +5,13 @@ import { saveVault } from '@/lib/vault';
 interface VaultContextType {
   vault: VaultData | null;
   cryptoKey: CryptoKey | null;
+  vmkBytes: ArrayBuffer | null;
   isUnlocked: boolean;
   prfEnabled: boolean;
   selectedAccountId: string | null;
   setVault: (vault: VaultData) => void;
   setCryptoKey: (key: CryptoKey) => void;
+  setVmkBytes: (bytes: ArrayBuffer) => void;
   setPrfEnabled: (enabled: boolean) => void;
   setSelectedAccountId: (id: string | null) => void;
   updateVault: (updater: (vault: VaultData) => VaultData) => Promise<void>;
@@ -22,6 +24,7 @@ const VaultContext = createContext<VaultContextType | null>(null);
 export function VaultProvider({ children }: { children: React.ReactNode }) {
   const [vault, setVaultState] = useState<VaultData | null>(null);
   const [cryptoKey, setCryptoKeyState] = useState<CryptoKey | null>(null);
+  const [vmkBytes, setVmkBytesState] = useState<ArrayBuffer | null>(null);
   const [prfEnabled, setPrfEnabledState] = useState(false);
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
 
@@ -29,6 +32,7 @@ export function VaultProvider({ children }: { children: React.ReactNode }) {
 
   const setVault = useCallback((v: VaultData) => setVaultState(v), []);
   const setCryptoKey = useCallback((k: CryptoKey) => setCryptoKeyState(k), []);
+  const setVmkBytes = useCallback((b: ArrayBuffer) => setVmkBytesState(b), []);
   const setPrfEnabled = useCallback((e: boolean) => setPrfEnabledState(e), []);
 
   const updateVault = useCallback(
@@ -44,6 +48,7 @@ export function VaultProvider({ children }: { children: React.ReactNode }) {
   const lock = useCallback(() => {
     setVaultState(null);
     setCryptoKeyState(null);
+    setVmkBytesState(null);
     setPrfEnabledState(false);
     setSelectedAccountId(null);
   }, []);
@@ -58,11 +63,13 @@ export function VaultProvider({ children }: { children: React.ReactNode }) {
       value={{
         vault,
         cryptoKey,
+        vmkBytes,
         isUnlocked,
         prfEnabled,
         selectedAccountId,
         setVault,
         setCryptoKey,
+        setVmkBytes,
         setPrfEnabled,
         setSelectedAccountId,
         updateVault,

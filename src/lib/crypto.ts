@@ -84,4 +84,57 @@ export function generateSalt(): ArrayBuffer {
   return crypto.getRandomValues(new Uint8Array(32)).buffer;
 }
 
+// Generate a random 256-bit Vault Master Key
+export function generateVmk(): ArrayBuffer {
+  return crypto.getRandomValues(new Uint8Array(32)).buffer;
+}
+
+// Import raw VMK bytes as an AES-GCM CryptoKey
+export async function importVmk(vmkBytes: ArrayBuffer): Promise<CryptoKey> {
+  return crypto.subtle.importKey(
+    'raw',
+    vmkBytes,
+    { name: 'AES-GCM', length: 256 },
+    true, // extractable so we can export for wrapping
+    ['encrypt', 'decrypt']
+  );
+}
+
+// Export a CryptoKey to raw bytes
+export async function exportKey(key: CryptoKey): Promise<ArrayBuffer> {
+  return crypto.subtle.exportKey('raw', key);
+}
+
+// Wrap (encrypt) VMK bytes using a wrapping key derived from a YubiKey's PRF output
+export async function wrapVmk(
+  vmkBytes: ArrayBuffer,
+  wrappingKey: CryptoKey
+): Promise<{ wrappedVmk: string; wrappingIv: string }> {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const wrapped = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv },
+    wrappingKey,
+    vmkBytes
+  );
+  return {
+    wrappedVmk: arrayBufferToBase64(wrapped),
+    wrappingIv: arrayBufferToBase64(iv.buffer),
+  };
+}
+
+// Unwrap (decrypt) VMK bytes using a wrapping key
+export async function unwrapVmk(
+  wrappedVmk: string,
+  wrappingIv: string,
+  wrappingKey: CryptoKey
+): Promise<ArrayBuffer> {
+  const ivBuffer = base64ToArrayBuffer(wrappingIv);
+  const wrappedBuffer = base64ToArrayBuffer(wrappedVmk);
+  return crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: ivBuffer },
+    wrappingKey,
+    wrappedBuffer
+  );
+}
+
 export { arrayBufferToBase64, base64ToArrayBuffer };
