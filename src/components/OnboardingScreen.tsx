@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { isWebAuthnSupported, registerCredential, authenticateCredential } from '@/lib/webauthn';
 import { createVault, unlockVault, vaultExists, getStoredKeyIds, isVaultPrfEnabled } from '@/lib/vault';
 import { useVault } from '@/contexts/VaultContext';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
 export default function OnboardingScreen() {
@@ -14,6 +14,15 @@ export default function OnboardingScreen() {
   const [infoExpanded, setInfoExpanded] = useState(false);
   const hasVault = vaultExists();
   const supported = isWebAuthnSupported();
+  const autoTriggered = useRef(false);
+
+  // Auto-trigger unlock if vault exists
+  useEffect(() => {
+    if (hasVault && supported && !autoTriggered.current) {
+      autoTriggered.current = true;
+      handleUnlock(true);
+    }
+  }, [hasVault, supported]);
 
   const handleCreate = async () => {
     setLoading(true);
@@ -44,7 +53,7 @@ export default function OnboardingScreen() {
     }
   };
 
-  const handleUnlock = async () => {
+  const handleUnlock = async (silent = false) => {
     setLoading(true);
     setError(null);
     try {
@@ -69,7 +78,10 @@ export default function OnboardingScreen() {
       setPrfEnabled(vaultUsesPrf);
       toast.success('Vault unlocked');
     } catch (err: any) {
-      setError(err.message || 'Failed to unlock vault');
+      if (!silent) {
+        setError(err.message || 'Failed to unlock vault');
+      }
+      // Silent mode: user cancelled, just reset quietly
     } finally {
       setLoading(false);
     }
@@ -121,7 +133,7 @@ export default function OnboardingScreen() {
           >
             {hasVault ? (
               <>
-                <Button onClick={handleUnlock} disabled={loading} size="lg" className="w-full h-14 text-base gap-3">
+                <Button onClick={() => handleUnlock()} disabled={loading} size="lg" className="w-full h-14 text-base gap-3">
                   <Key className="w-5 h-5" />
                   {loading ? 'Waiting for YubiKey...' : 'Tap YubiKey to Unlock'}
                 </Button>
