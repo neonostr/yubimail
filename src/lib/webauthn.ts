@@ -3,8 +3,8 @@ import { arrayBufferToBase64, base64ToArrayBuffer } from './crypto';
 const RP_NAME = 'YubiMail';
 const RP_ID = window.location.hostname;
 
-function generateUserId(): Uint8Array {
-  return crypto.getRandomValues(new Uint8Array(16));
+function generateUserId(): ArrayBuffer {
+  return crypto.getRandomValues(new Uint8Array(16)).buffer as ArrayBuffer;
 }
 
 export async function registerCredential(
