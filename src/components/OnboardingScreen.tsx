@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { isWebAuthnSupported, registerCredential, authenticateCredential } from '@/lib/webauthn';
 import { createVault, unlockVault, vaultExists, getStoredKeyIds, isVaultPrfEnabled } from '@/lib/vault';
 import { useVault } from '@/contexts/VaultContext';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
 export default function OnboardingScreen() {
