@@ -123,11 +123,17 @@ export default function AddressSidebar({ onCreateNew }: Props) {
 
       {/* Address List */}
       <div className="flex-1 overflow-y-auto scrollbar-thin">
-        {accounts.length === 0 ? (
+        {filteredAccounts.length === 0 ? (
           <div className="p-6 text-center text-muted-foreground text-sm">
             <Mail className="w-8 h-8 mx-auto mb-3 opacity-40" />
-            <p>No addresses yet</p>
-            <p className="text-xs mt-1">Create one to get started</p>
+            {accounts.length === 0 ? (
+              <>
+                <p>No addresses yet</p>
+                <p className="text-xs mt-1">Create one to get started</p>
+              </>
+            ) : (
+              <p>No matches found</p>
+            )}
           </div>
         ) : (
           <div className="p-2 space-y-1">
