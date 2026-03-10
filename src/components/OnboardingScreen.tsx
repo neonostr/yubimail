@@ -76,7 +76,7 @@ export default function OnboardingScreen() {
       setCryptoKey(key);
       setVmkBytes(vmkBytes);
       setPrfEnabled(vaultUsesPrf);
-      toast.success('Vault unlocked');
+      // Silent unlock — no toast needed
     } catch (err: any) {
       if (!silent) {
         setError(err.message || 'Failed to unlock vault');
