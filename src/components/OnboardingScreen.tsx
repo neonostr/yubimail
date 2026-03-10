@@ -228,12 +228,10 @@ export default function OnboardingScreen() {
                 </p>
               </div>
 
-              <p className="pt-2 border-t border-border">
-                YubiMail is free &amp; open source.{' '}
-                <a href="https://github.com/neonostr/yubimail" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">
-                  View on GitHub
-                </a>
-              </p>
+              <a href="https://github.com/neonostr/yubimail" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 pt-2 border-t border-border underline underline-offset-2 hover:text-foreground">
+                <Github className="w-3.5 h-3.5" />
+                Free &amp; Open Source
+              </a>
             </div>
           }
         </motion.div>
