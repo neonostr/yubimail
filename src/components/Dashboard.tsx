@@ -33,8 +33,8 @@ export default function Dashboard() {
       {/* Top bar */}
       <header className="h-12 border-b border-border flex items-center justify-between px-4 shrink-0">
         <div className="flex items-center gap-2">
-          <Shield className="w-4.5 h-4.5 text-primary" />
-          <span className="font-bold text-sm tracking-tight">
+          <Shield className="w-5 h-5 text-primary" />
+          <span className="font-bold text-base tracking-tight">
             Yubi<span className="text-primary">Mail</span>
           </span>
         </div>
