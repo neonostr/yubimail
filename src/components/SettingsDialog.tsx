@@ -120,7 +120,7 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>Manage your YubiKeys and vault</DialogDescription>
+          <DialogDescription>Manage your YubiKeys</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-2">
