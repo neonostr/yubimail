@@ -33,12 +33,9 @@ export default function Dashboard() {
       {/* Top bar */}
       <header className="h-12 border-b border-border flex items-center justify-between px-4 shrink-0">
         <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-primary" />
+          <Shield className="w-4.5 h-4.5 text-primary" />
           <span className="font-bold text-sm tracking-tight">
             Yubi<span className="text-primary">Mail</span>
-          </span>
-          <span className="text-xs text-muted-foreground ml-2 font-mono">
-            {vault?.accounts.length || 0} addresses
           </span>
         </div>
         <div className="flex items-center gap-1">
