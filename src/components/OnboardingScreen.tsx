@@ -230,7 +230,7 @@ export default function OnboardingScreen() {
 
               <p className="pt-2 border-t border-border">
                 YubiMail is free &amp; open source.{' '}
-                <a href="https://github.com/neonostr/yubimail" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2 hover:text-primary/80">
+                <a href="https://github.com/neonostr/yubimail" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">
                   View on GitHub
                 </a>
               </p>
