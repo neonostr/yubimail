@@ -113,10 +113,10 @@ export default function OnboardingScreen() {
           className="flex justify-center"
         >
           <div
-            className="w-24 h-24 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center"
-            style={{ boxShadow: '0 0 40px hsl(var(--primary) / 0.15), 0 0 80px hsl(var(--primary) / 0.05)' }}
+            className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center"
+            style={{ boxShadow: '0 0 30px hsl(var(--primary) / 0.12), 0 0 60px hsl(var(--primary) / 0.04)' }}
           >
-            <Shield className="w-12 h-12 text-primary" />
+            <Shield className="w-8 h-8 text-primary" />
           </div>
         </motion.div>
 
