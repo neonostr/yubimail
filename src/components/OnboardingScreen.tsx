@@ -103,7 +103,7 @@ export default function OnboardingScreen() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-lg text-center space-y-10 relative z-10"
+        className="w-full max-w-md text-center space-y-6 relative z-10"
       >
         {/* Shield icon with glow */}
         <motion.div
@@ -113,19 +113,19 @@ export default function OnboardingScreen() {
           className="flex justify-center"
         >
           <div
-            className="w-24 h-24 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center"
-            style={{ boxShadow: '0 0 40px hsl(var(--primary) / 0.15), 0 0 80px hsl(var(--primary) / 0.05)' }}
+            className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center"
+            style={{ boxShadow: '0 0 30px hsl(var(--primary) / 0.12), 0 0 60px hsl(var(--primary) / 0.04)' }}
           >
-            <Shield className="w-12 h-12 text-primary" />
+            <Shield className="w-8 h-8 text-primary" />
           </div>
         </motion.div>
 
         {/* Title & subtitle */}
-        <div className="space-y-4">
-          <h1 className="text-5xl font-bold tracking-tight text-foreground">
+        <div className="space-y-3">
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">
             Yubi<span className="text-primary">Mail</span>
           </h1>
-          <p className="text-muted-foreground text-lg leading-relaxed max-w-sm mx-auto">
+          <p className="text-muted-foreground text-base leading-relaxed max-w-sm mx-auto">
             Disposable email addresses, secured by your YubiKey.
           </p>
           <p className="text-muted-foreground/70 text-sm">
@@ -205,11 +205,11 @@ export default function OnboardingScreen() {
           {features.map((f) => (
             <div
               key={f.label}
-              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-card border border-border"
+              className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-card border border-border"
             >
-              <f.icon className="w-4 h-4 text-primary" />
-              <p className="text-sm font-medium text-foreground">{f.label}</p>
-              <p className="text-xs text-muted-foreground">{f.desc}</p>
+              <f.icon className="w-3.5 h-3.5 text-primary" />
+              <p className="text-xs font-medium text-foreground">{f.label}</p>
+              <p className="text-[10px] text-muted-foreground">{f.desc}</p>
             </div>
           ))}
         </motion.div>
