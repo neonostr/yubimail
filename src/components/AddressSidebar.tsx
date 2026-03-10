@@ -131,7 +131,7 @@ export default function AddressSidebar({ onCreateNew }: Props) {
           </div>
         ) : (
           <div className="p-2 space-y-1">
-            {accounts.map((account) => {
+            {filteredAccounts.map((account) => {
               const isSelected = selectedAccountId === account.id;
               const timeLeft = getTimeRemaining(account.autoDeleteAt);
 
