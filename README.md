@@ -1,73 +1,44 @@
-# Welcome to your Lovable project
+# YubiMail
 
-## Project info
+**Disposable email addresses, secured by your YubiKey.**
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+No passwords. No accounts. No tracking. Just tap your YubiKey and go.
 
-## How can I edit this code?
+## What is YubiMail?
 
-There are several ways of editing your application.
+YubiMail lets you create temporary, disposable email addresses on the fly — perfect for signing up for services, avoiding spam, or keeping your real inbox clean. All your credentials are encrypted and stored locally in your browser, protected by your hardware security key.
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- 🔐 **Hardware-secured vault** — Your email credentials are encrypted with AES-256-GCM, unlocked only by your YubiKey
+- 📨 **Instant disposable inboxes** — Create new email addresses in one tap
+- ⏱️ **Auto-delete timers** — Set addresses to self-destruct after a chosen time period
+- 🚫 **No backend** — Everything runs client-side in your browser. No servers, no data collection
+- 🔑 **WebAuthn + PRF** — Uses modern browser standards for hardware-bound encryption when supported
 
-Changes made via Lovable will be committed automatically to this repo.
+## How it works
 
-**Use your preferred IDE**
+1. **Tap your YubiKey** to create or unlock your encrypted vault
+2. **Create a disposable address** — YubiMail generates a real email address via [mail.tm](https://mail.tm)
+3. **Receive emails** — Check your inbox directly in the app
+4. **Auto-delete** — Addresses and their credentials are removed when the timer expires
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Good to know
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- These are **receive-only** inboxes — you can't send emails from them
+- Emails on mail.tm are stored for a **maximum of 7 days**, then automatically deleted
+- Your vault lives in your browser's local storage — if you clear browser data, it's gone
+- A modern browser with WebAuthn support is required (Chrome, Firefox, Edge)
 
-Follow these steps:
+## Tech stack
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Built with React, TypeScript, Vite, Tailwind CSS, and shadcn/ui.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Links
 
-# Step 3: Install the necessary dependencies.
-npm i
+- 🌐 [yubimail.lovable.app](https://yubimail.lovable.app)
+- 💻 [Source on GitHub](https://github.com/neonostr/yubimail)
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## License
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Free & open source.
