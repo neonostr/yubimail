@@ -227,6 +227,13 @@ export default function OnboardingScreen() {
                   <span className="text-foreground font-medium">No backend:</span> YubiMail has no server. The encrypted vault lives entirely in your browser's local storage. If you clear your browser data, your vault is gone.
                 </p>
               </div>
+
+              <p className="pt-2 border-t border-border">
+                YubiMail is free &amp; open source.{' '}
+                <a href="https://github.com/neonostr/yubimail" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2 hover:text-primary/80">
+                  View on GitHub
+                </a>
+              </p>
             </div>
           }
         </motion.div>
