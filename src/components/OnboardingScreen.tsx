@@ -103,7 +103,7 @@ export default function OnboardingScreen() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-lg text-center space-y-10 relative z-10"
+        className="w-full max-w-md text-center space-y-6 relative z-10"
       >
         {/* Shield icon with glow */}
         <motion.div
