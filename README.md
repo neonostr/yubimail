@@ -36,7 +36,7 @@ Built with React, TypeScript, Vite, Tailwind CSS, and shadcn/ui.
 
 ## Links
 
-- 🌐 [yubimail.lovable.app](https://yubimail.lovable.app)
+- 🌐 [yubikeymail.com](https://yubikeymail.com)
 - 💻 [Source on GitHub](https://github.com/neonostr/yubimail)
 
 ## License
