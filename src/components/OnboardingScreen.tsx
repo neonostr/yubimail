@@ -207,9 +207,9 @@ export default function OnboardingScreen() {
               key={f.label}
               className="flex flex-col items-center gap-2 p-4 rounded-xl bg-card border border-border"
             >
-              <f.icon className="w-4 h-4 text-primary" />
-              <p className="text-sm font-medium text-foreground">{f.label}</p>
-              <p className="text-xs text-muted-foreground">{f.desc}</p>
+              <f.icon className="w-3.5 h-3.5 text-primary" />
+              <p className="text-xs font-medium text-foreground">{f.label}</p>
+              <p className="text-[10px] text-muted-foreground">{f.desc}</p>
             </div>
           ))}
         </motion.div>
