@@ -125,7 +125,7 @@ export default function OnboardingScreen() {
           <h1 className="text-4xl font-bold tracking-tight text-foreground">
             Yubi<span className="text-primary">Mail</span>
           </h1>
-          <p className="text-muted-foreground text-lg leading-relaxed max-w-sm mx-auto">
+          <p className="text-muted-foreground text-base leading-relaxed max-w-sm mx-auto">
             Disposable email addresses, secured by your YubiKey.
           </p>
           <p className="text-muted-foreground/70 text-sm">
