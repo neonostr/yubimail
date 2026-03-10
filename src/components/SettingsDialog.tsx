@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { useVault } from '@/contexts/VaultContext';
-import { registerCredential } from '@/lib/webauthn';
-import { clearVault, addKeyToVault, removeKeyFromVault } from '@/lib/vault';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import { Key, Trash2, Plus, AlertTriangle, Download, Upload } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { useVault } from "@/contexts/VaultContext";
+import { registerCredential } from "@/lib/webauthn";
+import { clearVault, addKeyToVault, removeKeyFromVault } from "@/lib/vault";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Key, Trash2, Plus, AlertTriangle, Download, Upload } from "lucide-react";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -17,11 +17,11 @@ interface Props {
 export default function SettingsDialog({ open, onOpenChange }: Props) {
   const { vault, vmkBytes, updateVault, lock } = useVault();
   const [addingKey, setAddingKey] = useState(false);
-  const [newKeyLabel, setNewKeyLabel] = useState('');
+  const [newKeyLabel, setNewKeyLabel] = useState("");
 
   const handleAddKey = async () => {
     if (!vmkBytes) {
-      toast.error('Vault master key not available. Please re-unlock.');
+      toast.error("Vault master key not available. Please re-unlock.");
       return;
     }
     setAddingKey(true);
@@ -33,7 +33,7 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
       await addKeyToVault(vmkBytes, result.credentialId, keyMaterial);
 
       // Add key to vault data
-      const { arrayBufferToBase64 } = await import('@/lib/crypto');
+      const { arrayBufferToBase64 } = await import("@/lib/crypto");
       await updateVault((v) => ({
         ...v,
         registeredKeys: [
@@ -46,10 +46,10 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
           },
         ],
       }));
-      toast.success('YubiKey registered — it can now unlock the vault independently');
-      setNewKeyLabel('');
+      toast.success("YubiKey registered — it can now unlock the vault independently");
+      setNewKeyLabel("");
     } catch (err: any) {
-      toast.error('Failed to register key: ' + (err.message || ''));
+      toast.error("Failed to register key: " + (err.message || ""));
     } finally {
       setAddingKey(false);
     }
@@ -57,7 +57,7 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
 
   const handleRemoveKey = async (credentialId: string) => {
     if (!vault || vault.registeredKeys.length <= 1) {
-      toast.error('Cannot remove the last key');
+      toast.error("Cannot remove the last key");
       return;
     }
     // Remove wrapped key entry
@@ -67,45 +67,49 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
       ...v,
       registeredKeys: v.registeredKeys.filter((k) => k.credentialId !== credentialId),
     }));
-    toast.success('Key removed');
+    toast.success("Key removed");
   };
 
   const handleClearAll = () => {
-    if (window.confirm('This will permanently delete ALL data including encrypted vault. This cannot be undone. Continue?')) {
+    if (
+      window.confirm(
+        "This will permanently delete ALL data including encrypted vault. This cannot be undone. Continue?",
+      )
+    ) {
       clearVault();
       lock();
-      toast.success('All data cleared');
+      toast.success("All data cleared");
     }
   };
 
   const handleExport = () => {
-    const data = localStorage.getItem('yubimail-vault');
+    const data = localStorage.getItem("yubimail-vault");
     if (!data) return;
-    const blob = new Blob([data], { type: 'application/json' });
+    const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `yubimail-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success('Vault backup exported');
+    toast.success("Vault backup exported");
   };
 
   const handleImport = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
       try {
         const text = await file.text();
         JSON.parse(text);
-        localStorage.setItem('yubimail-vault', text);
+        localStorage.setItem("yubimail-vault", text);
         lock();
-        toast.success('Vault imported. Please unlock with your YubiKey.');
+        toast.success("Vault imported. Please unlock with your YubiKey.");
       } catch {
-        toast.error('Invalid backup file');
+        toast.error("Invalid backup file");
       }
     };
     input.click();
@@ -126,7 +130,7 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
               Registered YubiKeys
             </h3>
             <p className="text-xs text-muted-foreground">
-              Each registered key can independently unlock the vault.
+              Each registered key can independently unlock the access keys.
             </p>
             <div className="space-y-2">
               {vault?.registeredKeys.map((key) => (
@@ -135,10 +139,8 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
                   className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border"
                 >
                   <div>
-                    <p className="text-sm font-medium text-foreground">{key.label || 'Unnamed Key'}</p>
-                    <p className="text-xs text-muted-foreground font-mono">
-                      {key.credentialId.slice(0, 16)}...
-                    </p>
+                    <p className="text-sm font-medium text-foreground">{key.label || "Unnamed Key"}</p>
+                    <p className="text-xs text-muted-foreground font-mono">{key.credentialId.slice(0, 16)}...</p>
                     <p className="text-xs text-muted-foreground">
                       Registered {new Date(key.registeredAt).toLocaleDateString()}
                     </p>
@@ -163,7 +165,13 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
                 placeholder="Key label (optional)"
                 className="text-sm"
               />
-              <Button onClick={handleAddKey} disabled={addingKey} variant="outline" size="sm" className="shrink-0 gap-1">
+              <Button
+                onClick={handleAddKey}
+                disabled={addingKey}
+                variant="outline"
+                size="sm"
+                className="shrink-0 gap-1"
+              >
                 <Plus className="w-3.5 h-3.5" />
                 Add Key
               </Button>
@@ -173,7 +181,7 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
           <Separator />
 
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">Vault Backup</h3>
+            <h3 className="text-sm font-semibold text-foreground">Backup</h3>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
                 <Download className="w-3.5 h-3.5" />
@@ -185,7 +193,7 @@ export default function SettingsDialog({ open, onOpenChange }: Props) {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Backups are encrypted. You'll need a registered YubiKey to unlock.
+              Backups are encrypted. You'll need a registered YubiKey to decrypt.
             </p>
           </div>
 
