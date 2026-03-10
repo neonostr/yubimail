@@ -105,11 +105,20 @@ export default function AddressSidebar({ onCreateNew }: Props) {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-border">
+      <div className="p-4 border-b border-border space-y-2">
         <Button onClick={onCreateNew} className="w-full gap-2" size="sm">
           <Plus className="w-4 h-4" />
           New Address
         </Button>
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+          <Input
+            placeholder="Search addresses or labels..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="h-8 pl-8 text-xs bg-background"
+          />
+        </div>
       </div>
 
       {/* Address List */}
