@@ -205,7 +205,7 @@ export default function OnboardingScreen() {
           {features.map((f) => (
             <div
               key={f.label}
-              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-card border border-border"
+              className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-card border border-border"
             >
               <f.icon className="w-3.5 h-3.5 text-primary" />
               <p className="text-xs font-medium text-foreground">{f.label}</p>
