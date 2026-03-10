@@ -88,7 +88,7 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <div className="dark min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="dark min-h-screen flex items-center justify-center bg-background p-4 relative">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
