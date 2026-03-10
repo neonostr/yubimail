@@ -120,7 +120,7 @@ export default function AddressSidebar({ onCreateNew }: Props) {
             placeholder="Search addresses or labels..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-8 pl-8 text-xs bg-transparent border-none shadow-none focus-visible:ring-0"
+            className="h-8 pl-8 text-xs bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         </div>
       </div>
