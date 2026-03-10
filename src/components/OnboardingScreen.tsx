@@ -245,7 +245,6 @@ export default function OnboardingScreen() {
             Free & Open Source
           </a>
         </motion.div>
-        </motion.div>
       </motion.div>
     </div>);
 
