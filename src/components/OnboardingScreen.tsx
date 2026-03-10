@@ -121,8 +121,8 @@ export default function OnboardingScreen() {
         </motion.div>
 
         {/* Title & subtitle */}
-        <div className="space-y-4">
-          <h1 className="text-5xl font-bold tracking-tight text-foreground">
+        <div className="space-y-3">
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">
             Yubi<span className="text-primary">Mail</span>
           </h1>
           <p className="text-muted-foreground text-lg leading-relaxed max-w-sm mx-auto">
