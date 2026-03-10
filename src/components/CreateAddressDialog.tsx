@@ -127,22 +127,18 @@ export default function CreateAddressDialog({ open, onOpenChange }: Props) {
                   className="font-mono text-sm"
                 />
                 <span className="text-muted-foreground text-sm shrink-0">@</span>
-                {domains.length > 1 ? (
-                  <Select value={selectedDomain} onValueChange={setSelectedDomain}>
-                    <SelectTrigger className="w-40 font-mono text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {domains.map((d) => (
-                        <SelectItem key={d.id} value={d.domain} className="font-mono text-sm">
-                          {d.domain}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <span className="font-mono text-sm text-muted-foreground">{selectedDomain || '...'}</span>
-                )}
+                <Select value={selectedDomain} onValueChange={setSelectedDomain}>
+                  <SelectTrigger className="w-40 font-mono text-sm">
+                    <SelectValue placeholder="..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {domains.map((d) => (
+                      <SelectItem key={d.id} value={d.domain} className="font-mono text-sm">
+                        {d.domain}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <Button variant="outline" size="icon" onClick={randomize} title="Randomize">
                 <RefreshCw className="w-4 h-4" />
