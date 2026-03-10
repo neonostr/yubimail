@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useVault } from '@/contexts/VaultContext';
-import { Plus, Copy, Trash2, Tag, Timer, Mail } from 'lucide-react';
+import { Plus, Copy, Trash2, Tag, Timer, Mail, Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -27,8 +28,17 @@ interface Props {
 export default function AddressSidebar({ onCreateNew }: Props) {
   const { vault, selectedAccountId, setSelectedAccountId, updateVault } = useVault();
   const [, setTick] = useState(0);
+  const [search, setSearch] = useState('');
   const accounts = vault?.accounts || [];
   const cleaningRef = useRef(false);
+
+  const filteredAccounts = useMemo(() => {
+    if (!search.trim()) return accounts;
+    const q = search.toLowerCase();
+    return accounts.filter(
+      (a) => a.address.toLowerCase().includes(q) || (a.tag && a.tag.toLowerCase().includes(q))
+    );
+  }, [accounts, search]);
 
   const cleanupExpired = useCallback(async () => {
     if (cleaningRef.current || !vault) return;
@@ -95,24 +105,39 @@ export default function AddressSidebar({ onCreateNew }: Props) {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-border">
+      <div className="p-4 border-b border-border space-y-2">
         <Button onClick={onCreateNew} className="w-full gap-2" size="sm">
           <Plus className="w-4 h-4" />
           New Address
         </Button>
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+          <Input
+            placeholder="Search addresses or labels..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="h-8 pl-8 text-xs bg-background"
+          />
+        </div>
       </div>
 
       {/* Address List */}
       <div className="flex-1 overflow-y-auto scrollbar-thin">
-        {accounts.length === 0 ? (
+        {filteredAccounts.length === 0 ? (
           <div className="p-6 text-center text-muted-foreground text-sm">
             <Mail className="w-8 h-8 mx-auto mb-3 opacity-40" />
-            <p>No addresses yet</p>
-            <p className="text-xs mt-1">Create one to get started</p>
+            {accounts.length === 0 ? (
+              <>
+                <p>No addresses yet</p>
+                <p className="text-xs mt-1">Create one to get started</p>
+              </>
+            ) : (
+              <p>No matches found</p>
+            )}
           </div>
         ) : (
           <div className="p-2 space-y-1">
-            {accounts.map((account) => {
+            {filteredAccounts.map((account) => {
               const isSelected = selectedAccountId === account.id;
               const timeLeft = getTimeRemaining(account.autoDeleteAt);
 
