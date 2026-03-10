@@ -28,8 +28,17 @@ interface Props {
 export default function AddressSidebar({ onCreateNew }: Props) {
   const { vault, selectedAccountId, setSelectedAccountId, updateVault } = useVault();
   const [, setTick] = useState(0);
+  const [search, setSearch] = useState('');
   const accounts = vault?.accounts || [];
   const cleaningRef = useRef(false);
+
+  const filteredAccounts = useMemo(() => {
+    if (!search.trim()) return accounts;
+    const q = search.toLowerCase();
+    return accounts.filter(
+      (a) => a.address.toLowerCase().includes(q) || (a.tag && a.tag.toLowerCase().includes(q))
+    );
+  }, [accounts, search]);
 
   const cleanupExpired = useCallback(async () => {
     if (cleaningRef.current || !vault) return;
