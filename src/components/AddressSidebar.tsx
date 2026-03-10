@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useVault } from '@/contexts/VaultContext';
-import { Plus, Copy, Trash2, Tag, Timer, Mail } from 'lucide-react';
+import { Plus, Copy, Trash2, Tag, Timer, Mail, Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
